@@ -10,7 +10,7 @@ Moisture::Moisture(int n): reading(dry), num(n) {
 	pinMode(SENSOR, INPUT);
 };
 
-//Will return a 1 if there is moisture 
+//Will return a 1 if there is NO moisture 
 level Moisture::get_read() { 
 	int res = digitalRead(SENSOR); //Save the reading to the digital Read Sensor	
 	if (res == 1)

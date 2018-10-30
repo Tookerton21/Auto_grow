@@ -6,6 +6,7 @@ enum level {
 	wet,
 	dry,
 };
+
 class Moisture {
 	private:
 		level reading;
