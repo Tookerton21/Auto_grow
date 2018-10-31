@@ -6,7 +6,7 @@ Watering::Watering(){
 	relay = new Relay();
 	level = new Moisture(0);
 	stop_time = 60; //Default is 60 seconds
-}
+};
 
 //Check the level of the water in the sensors
 //Return appropriate reading for whether it needs
@@ -27,9 +27,9 @@ void Watering::give_water_timer(){
 	relay->com_switch(w_switch, on);
 	clock_t start_time = clock();//Start clock
 	
-	while((clock - start_time) / CLOCKS_PER_SEC < stop_time){
+	while((clock() - start_time) / CLOCKS_PER_SEC < stop_time){
 		//Put thread to sleep while watering
-		this_thread::sleep_for(chrono::seconds(1));
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 
 	relay->com_switch(w_switch, off); //Turn off the watering
@@ -41,7 +41,7 @@ void Watering::give_water_no_timer(){
 
 	while(level->get_read() == dry){
 		//Put thread to sleep while watering
-		this_thread::sleep_for(chrono::seconds(1));
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 
 	relay->com_switch(w_switch, off);

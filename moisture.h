@@ -3,8 +3,8 @@
 
 //Enum for the moisture level
 enum level {
-	wet,
-	dry,
+	wet = 1,
+	dry = 0,
 };
 
 class Moisture {

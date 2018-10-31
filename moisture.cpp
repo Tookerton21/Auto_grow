@@ -14,9 +14,9 @@ Moisture::Moisture(int n): reading(dry), num(n) {
 level Moisture::get_read() { 
 	int res = digitalRead(SENSOR); //Save the reading to the digital Read Sensor	
 	if (res == 1)
-		reading = dry;
-	else
 		reading = wet;
+	else
+		reading = dry;
 
 	return reading;
 }
