@@ -2,16 +2,16 @@
 #include <wiringPi.h>
 
 //Port numbers for each of the switches using the wiringPi pin numbers
-const int one = 1;
-const int two = 2;
-const int three = 3;
-const int four = 4;
+const int one = 0;
+const int two = 1;
+const int three = 2;
+const int four = 3;
 
 Relay::Relay(){
-	sw[0] = one;
-	sw[1] = two;
-	sw[2] = three;
-	sw[3] = four;
+	sw[one] = one;
+	sw[two] = two;
+	sw[three] = three;
+	sw[four] = four;
 
 	wiringPiSetup();
 
