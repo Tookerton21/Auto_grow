@@ -4,6 +4,7 @@
 #include "temp_humid.h"
 #include <iostream>
 #include <string>
+#include <math.h> 
 
 //const int PIN = 3;//PIN FOR THE SENSOR ON THE PI
 
@@ -12,6 +13,8 @@ Temp_humid::Temp_humid(){
 
 	temp = 0;
 	humid = 0;
+	for(int i=0; i <SIZE; ++i)
+		byte[i] = 0;
 }
 
 
@@ -35,7 +38,7 @@ void Temp_humid::send_signal(){
 	
 }
 
-void Temp_humid::read_signal(){
+bool Temp_humid::read_signal(){
 	using namespace std::chrono;
 
 	//Variable declaration
@@ -63,7 +66,7 @@ void Temp_humid::read_signal(){
 	send_signal();
 	while(digitalRead(PIN)==LOW){
 		if(loop < 0)
-			failed == true;
+			return false;;
 
 		--loop;
 	}
@@ -71,22 +74,19 @@ void Temp_humid::read_signal(){
 
 	while(digitalRead(PIN) == HIGH){
 		if(loop < 0)
-			failed == true;
+			return false;;
 
 		--loop;
 	}
 
 	unsigned time_e;
 	//Response is 40 bits so we will have 40 cycles
-	if(failed != true)
 		for (int i=0; i<40; ++i){
 			time_e = micros();
 			//Low response
 
 			while(digitalRead(PIN) == LOW){
-			//std::cout << "time elapsed in low: " << micros()-time_e << std::endl;
 			}
-	//		std::cout << "end low; time: " << micros() - time_e << std::endl;
 			loop = 1000;
 
 			time_e = micros();
@@ -95,58 +95,49 @@ void Temp_humid::read_signal(){
 					break;
 				--loop;
 			}
-			
+		
 			bit[i] = micros() - time_e;
-			//std::cout << "end high; time: " << micros()-time_e << std::endl;
 
 		}
-	else{
-		std::cout << "signal failed\n";
-	}
 
 	for(int i = 0; i <40; i += 8){
-		//std::cout << "bit[" << i << "]: " << bit[i] << std::endl;
 		unsigned int *start = bit+i;
-		std::cout << "BYTE: " << convert_binary(start) << std::endl;
+		byte[i/8] = convert_binary(start);
 	}
+	
+	return checksum(byte);
 }
 
 int Temp_humid::convert_binary(unsigned int byte[]){
 	int sum = 0;
+
 	for(int i=0; i<8; ++i){
-		if(byte[i] < 30)
-			sum += 2^(7-i);	
+		if(byte[i] > 30){
+			sum += pow(2.0, (7.0-(double)i));
+		}	
 	}
 
 	return sum;
 }
 
-void Temp_humid::get_reading(){
-	uint8_t laststate = HIGH;
-	uint8_t counter = 0;
+bool Temp_humid::checksum(int arr[]){
+	int sum = 0;
 
-	pinMode(PIN, OUTPUT);
-	digitalWrite(PIN, LOW);
-	delay(18);
+	for(int i=0; i<SIZE-1; ++i)
+		sum += arr[i];
 
-	pinMode(PIN, INPUT);
-
-	for (int i=0; i < 85; ++i){
-		counter = 0;
-		while(digitalRead(PIN) == laststate){
-			++counter;
-			delayMicroseconds(1);
-			if (counter == 255)
-				break;
-			
-		}
-		laststate = digitalRead(PIN);
-		if(counter == 255)
-			break;
-		
-
-		//ignore first 3 transitions
-		
+	if(sum == arr[SIZE-1]){
+		humid = arr[0];
+		temp = arr[2];
+		return true;
 	}
+	return false;
 }
 
+int Temp_humid::get_temp(){
+	return temp;
+}
+
+int Temp_humid::get_humid(){
+	return humid;
+}
