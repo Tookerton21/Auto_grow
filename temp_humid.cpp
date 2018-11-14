@@ -106,6 +106,7 @@ bool Temp_humid::read_signal(){
 	}
 	
 	return checksum(byte);
+
 }
 
 int Temp_humid::convert_binary(unsigned int byte[]){
