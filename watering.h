@@ -3,7 +3,7 @@
 #include <ctime>
 #include <cstdlib>
 
-const int w_switch = 0; //Switch that constrols the watering pump
+const int w_switch = 3; //Switch that constrols the watering pump
 
 class Watering {
 	private:
