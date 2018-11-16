@@ -11,6 +11,6 @@ class Relay {
 		int sw [NUM];
 
 	public:
-		Relay();
+		Relay(int);
 		void com_switch(int, int);
 };
